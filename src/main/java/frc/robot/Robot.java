@@ -7,9 +7,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import frc.robot.subsystems.Drive;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -24,6 +27,14 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
+  private static final int throttleJoystickID = 0;
+  private static final int turnJoystickID = 1;
+
+  private final Joystick throttleJoystick = new Joystick(throttleJoystickID);
+  private final Joystick turnJoystick = new Joystick(turnJoystickID);
+
+  private final Drive drive = new Drive();
+  
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -63,6 +74,7 @@ public class Robot extends TimedRobot {
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
+    drive.stop();
   }
 
   /**
@@ -86,6 +98,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    double throttle = throttleJoystick.getRawAxis(1);
+    double turn = turnJoystick.getRawAxis(0);
+    drive.setOpenLoop(throttle, turn);
+  }
+
+  @Override
+  public void testInit() {
+    drive.stop();
   }
 
   /**
@@ -93,5 +113,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+  }
+
+  @Override
+  public void disabledInit() {
+    drive.stop();
   }
 }
