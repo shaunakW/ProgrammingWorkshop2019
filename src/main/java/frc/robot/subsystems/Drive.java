@@ -13,7 +13,9 @@ public class Drive {
 
     private TalonSRX rightMaster, rightSlave, leftMaster, leftSlave;
 
-    public Drive() {
+    private static Drive instance = null;
+
+    private Drive() {
         rightMaster = new TalonSRX(rightMasterID);
         rightSlave = new TalonSRX(rightSlaveID);
         leftMaster = new TalonSRX(leftMasterID);
@@ -24,6 +26,13 @@ public class Drive {
 
         rightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 1000);
         leftMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 1000);
+    }
+
+    public static Drive getInstance() {
+        if (instance == null) {
+            instance = new Drive();
+        }
+        return instance;
     }
 
     public void setOpenLoop(double throttle, double turn) {

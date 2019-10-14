@@ -33,7 +33,7 @@ public class Robot extends TimedRobot {
   private final Joystick throttleJoystick = new Joystick(throttleJoystickID);
   private final Joystick turnJoystick = new Joystick(turnJoystickID);
 
-  private final Drive drive = new Drive();
+  private final Drive drive = Drive.getInstance();
   
   /**
    * This function is run when the robot is first started up and should be
