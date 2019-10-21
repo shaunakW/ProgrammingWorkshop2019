@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-public class Drive {
+public class Drive extends Subsystem {
     private static final int rightMasterID = 0;
     private static final int rightSlaveID = 1;
     private static final int leftMasterID = 2;
@@ -13,7 +13,9 @@ public class Drive {
 
     private TalonSRX rightMaster, rightSlave, leftMaster, leftSlave;
 
-    private static Drive instance = null;
+    private PeriodicIO mPeriodicIO = new PeriodicIO();
+
+    private static Drive mInstance = null;
 
     private Drive() {
         rightMaster = new TalonSRX(rightMasterID);
@@ -29,19 +31,41 @@ public class Drive {
     }
 
     public static Drive getInstance() {
-        if (instance == null) {
-            instance = new Drive();
+        if (mInstance == null) {
+            mInstance = new Drive();
         }
-        return instance;
+        return mInstance;
+    }
+
+    private static class PeriodicIO {
+        double right_demand;
+        double left_demand;
     }
 
     public void setOpenLoop(double throttle, double turn) {
-        rightMaster.set(ControlMode.PercentOutput, throttle + turn);
-        leftMaster.set(ControlMode.PercentOutput, throttle - turn);
+        mPeriodicIO.right_demand = throttle + turn;
+        mPeriodicIO.left_demand = throttle - turn;
     }
 
+    @Override
+    public void writePeriodicOutputs() {
+        rightMaster.set(ControlMode.PercentOutput, mPeriodicIO.right_demand);
+        leftMaster.set(ControlMode.PercentOutput, mPeriodicIO.left_demand);
+    }
+
+    @Override
     public void stop() {
         rightMaster.setNeutralMode(NeutralMode.Brake);
         leftMaster.setNeutralMode(NeutralMode.Brake);
+    }
+
+    @Override
+    public boolean checkSystem() {
+        return true;
+    }
+
+    @Override
+    public void outputTelemetry() {
+
     }
 }

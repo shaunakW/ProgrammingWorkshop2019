@@ -7,6 +7,7 @@
 
 package com.shaunak.programmingworkshop2019;
 
+import com.shaunak.programmingworkshop2019.loops.Looper;
 import com.shaunak.programmingworkshop2019.subsystems.Drive;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -33,7 +34,11 @@ public class Robot extends TimedRobot {
   private final Joystick throttleJoystick = new Joystick(throttleJoystickID);
   private final Joystick turnJoystick = new Joystick(turnJoystickID);
 
-  private final Drive drive = Drive.getInstance();
+  private final Looper mEnabledLooper = new Looper();
+  private final Looper mDisabledLooper = new Looper();
+
+  private static SubsystemManager mSubsystemManager = SubsystemManager.getInstance();
+  private final Drive mDrive = Drive.getInstance();
   
   /**
    * This function is run when the robot is first started up and should be
@@ -44,6 +49,9 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+
+    mSubsystemManager.registerEnabledLoops(mEnabledLooper);
+    mSubsystemManager.registerDisabledLoops(mDisabledLooper);
   }
 
   /**
@@ -74,7 +82,12 @@ public class Robot extends TimedRobot {
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
-    drive.stop();
+    mSubsystemManager.setSubsystems(mDrive);
+
+    mDrive.stop();
+
+    mDisabledLooper.stop();
+    mEnabledLooper.start();
   }
 
   /**
@@ -93,6 +106,12 @@ public class Robot extends TimedRobot {
     }
   }
 
+  @Override
+  public void teleopInit() {
+    mDisabledLooper.stop();
+    mEnabledLooper.start();
+  }
+
   /**
    * This function is called periodically during operator control.
    */
@@ -100,12 +119,12 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     double throttle = throttleJoystick.getRawAxis(1);
     double turn = turnJoystick.getRawAxis(0);
-    drive.setOpenLoop(throttle, turn);
+    mDrive.setOpenLoop(throttle, turn);
   }
 
   @Override
   public void testInit() {
-    drive.stop();
+    mDrive.stop();
   }
 
   /**
@@ -117,6 +136,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
-    drive.stop();
+    mDrive.stop();
+
+    mEnabledLooper.stop();
+    mDisabledLooper.start();
   }
 }
