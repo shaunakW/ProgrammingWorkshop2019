@@ -1,5 +1,8 @@
 package com.shaunak.programmingworkshop2019.subsystems;
 
+import com.shaunak.lib.util.CheesyDriveHelper;
+import com.shaunak.lib.util.DriveSignal;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -14,6 +17,7 @@ public class Drive extends Subsystem {
     private TalonSRX rightMaster, rightSlave, leftMaster, leftSlave;
 
     private PeriodicIO mPeriodicIO = new PeriodicIO();
+    private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
 
     private static Drive mInstance = null;
 
@@ -43,8 +47,13 @@ public class Drive extends Subsystem {
     }
 
     public void setOpenLoop(double throttle, double turn) {
-        mPeriodicIO.right_demand = throttle + turn;
-        mPeriodicIO.left_demand = throttle - turn;
+        DriveSignal driveSignal = mCheesyDriveHelper.cheesyDrive(throttle, turn, false);
+        mPeriodicIO.right_demand = driveSignal.getRight();
+        mPeriodicIO.left_demand = driveSignal.getLeft();
+    }
+
+    public boolean isHighGear() {
+        return false;
     }
 
     @Override
