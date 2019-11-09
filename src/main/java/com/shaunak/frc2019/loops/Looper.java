@@ -1,6 +1,6 @@
-package com.shaunak.programmingworkshop2019.loops;
+package com.shaunak.frc2019.loops;
 
-import com.shaunak.programmingworkshop2019.Constants;
+import com.shaunak.frc2019.Constants;
 import com.shaunak.lib.util.CrashTrackingRunnable;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;

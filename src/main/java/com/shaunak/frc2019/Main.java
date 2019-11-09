@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.shaunak.programmingworkshop2019;
+package com.shaunak.frc2019;
 
 import edu.wpi.first.wpilibj.RobotBase;
 

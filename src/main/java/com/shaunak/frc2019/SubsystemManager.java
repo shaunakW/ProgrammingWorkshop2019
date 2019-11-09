@@ -1,9 +1,9 @@
-package com.shaunak.programmingworkshop2019;
+package com.shaunak.frc2019;
 
-import com.shaunak.programmingworkshop2019.loops.ILooper;
-import com.shaunak.programmingworkshop2019.loops.Loop;
-import com.shaunak.programmingworkshop2019.loops.Looper;
-import com.shaunak.programmingworkshop2019.subsystems.Subsystem;
+import com.shaunak.frc2019.loops.ILooper;
+import com.shaunak.frc2019.loops.Loop;
+import com.shaunak.frc2019.loops.Looper;
+import com.shaunak.frc2019.subsystems.Subsystem;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,6 +1,6 @@
-package com.shaunak.programmingworkshop2019.subsystems;
+package com.shaunak.frc2019.subsystems;
 
-import com.shaunak.programmingworkshop2019.loops.ILooper;
+import com.shaunak.frc2019.loops.ILooper;
 
 /**
  * The Subsystem abstract class, which serves as a basic framework for all robot subsystems. Each subsystem outputs

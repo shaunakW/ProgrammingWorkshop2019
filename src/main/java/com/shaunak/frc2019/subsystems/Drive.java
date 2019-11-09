@@ -1,5 +1,6 @@
-package com.shaunak.programmingworkshop2019.subsystems;
+package com.shaunak.frc2019.subsystems;
 
+import com.shaunak.frc2019.Constants;
 import com.shaunak.lib.util.CheesyDriveHelper;
 import com.shaunak.lib.util.DriveSignal;
 
@@ -9,12 +10,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class Drive extends Subsystem {
-    private static final int rightMasterID = 0;
-    private static final int rightSlaveID = 1;
-    private static final int leftMasterID = 2;
-    private static final int leftSlaveID = 3;
-
-    private TalonSRX rightMaster, rightSlave, leftMaster, leftSlave;
+    private TalonSRX mRightMaster, mRightSlave, mLeftMaster, mLeftSlave;
 
     private PeriodicIO mPeriodicIO = new PeriodicIO();
     private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
@@ -22,16 +18,16 @@ public class Drive extends Subsystem {
     private static Drive mInstance = null;
 
     private Drive() {
-        rightMaster = new TalonSRX(rightMasterID);
-        rightSlave = new TalonSRX(rightSlaveID);
-        leftMaster = new TalonSRX(leftMasterID);
-        leftSlave = new TalonSRX(leftSlaveID);
+        mRightMaster = new TalonSRX(Constants.kDriveLeftMasterId);
+        mRightSlave = new TalonSRX(Constants.kDriveLeftSlaveId);
+        mLeftMaster = new TalonSRX(Constants.kDriveRightMasterId);
+        mLeftSlave = new TalonSRX(Constants.kDriveRightSlaveId);
 
-        rightSlave.set(ControlMode.Follower, rightMasterID);
-        leftSlave.set(ControlMode.Follower, leftMasterID);
+        mRightSlave.set(ControlMode.Follower, Constants.kDriveRightMasterId);
+        mLeftSlave.set(ControlMode.Follower, Constants.kDriveLeftMasterId);
 
-        rightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 1000);
-        leftMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 1000);
+        mRightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 1000);
+        mLeftMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 1000);
     }
 
     public static Drive getInstance() {
@@ -58,14 +54,14 @@ public class Drive extends Subsystem {
 
     @Override
     public void writePeriodicOutputs() {
-        rightMaster.set(ControlMode.PercentOutput, mPeriodicIO.right_demand);
-        leftMaster.set(ControlMode.PercentOutput, mPeriodicIO.left_demand);
+        mRightMaster.set(ControlMode.PercentOutput, mPeriodicIO.right_demand);
+        mLeftMaster.set(ControlMode.PercentOutput, mPeriodicIO.left_demand);
     }
 
     @Override
     public void stop() {
-        rightMaster.setNeutralMode(NeutralMode.Brake);
-        leftMaster.setNeutralMode(NeutralMode.Brake);
+        mRightMaster.setNeutralMode(NeutralMode.Brake);
+        mLeftMaster.setNeutralMode(NeutralMode.Brake);
     }
 
     @Override
