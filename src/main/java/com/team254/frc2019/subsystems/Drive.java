@@ -48,7 +48,7 @@ public class Drive extends Subsystem {
         double left_demand;
     }
 
-    public void setOpenLoop(DriveSignal signal) {
+    public synchronized void setOpenLoop(DriveSignal signal) {
         mPeriodicIO.right_demand = signal.getRight();
         mPeriodicIO.left_demand = signal.getLeft();
     }
@@ -58,7 +58,7 @@ public class Drive extends Subsystem {
     }
 
     @Override
-    public void readPeriodicInputs() {
+    public synchronized void readPeriodicInputs() {
         double throttle = mThrottleJoystick.getRawAxis(1);
         double turn = mTurnJoystick.getRawAxis(0);
         setCheesyishDrive(throttle, turn, false);
@@ -90,15 +90,14 @@ public class Drive extends Subsystem {
     }
 
     @Override
-    public void writePeriodicOutputs() {
+    public synchronized void writePeriodicOutputs() {
         mRightMaster.set(ControlMode.PercentOutput, mPeriodicIO.right_demand);
         mLeftMaster.set(ControlMode.PercentOutput, mPeriodicIO.left_demand);
     }
 
     @Override
     public void stop() {
-        mRightMaster.set(ControlMode.PercentOutput, 0.0);
-        mLeftMaster.set(ControlMode.PercentOutput, 0.0);
+        setOpenLoop(DriveSignal.NEUTRAL);
     }
 
     @Override
