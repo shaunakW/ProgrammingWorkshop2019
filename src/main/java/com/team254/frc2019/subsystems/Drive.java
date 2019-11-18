@@ -1,8 +1,7 @@
 package com.team254.frc2019.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import com.team254.frc2019.Constants;
 import com.team254.frc2019.Kinematics;
@@ -10,30 +9,27 @@ import com.team254.lib.geometry.Twist2d;
 import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.Util;
 
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 public class Drive extends Subsystem {
     private PeriodicIO mPeriodicIO = new PeriodicIO();
 
     private static Drive mInstance = null;
 
-    private final Joystick mThrottleJoystick, mTurnJoystick;
-    private TalonSRX mRightMaster, mRightSlave, mLeftMaster, mLeftSlave;
+    private final XboxController mController;
+    private CANSparkMax mRightMaster, mRightSlave, mLeftMaster, mLeftSlave;
 
     private Drive() {
-        mThrottleJoystick = new Joystick(Constants.kThrottleJoystickPort);
-        mTurnJoystick = new Joystick(Constants.kTurnJoystickPort);
+        mController = new XboxController(Constants.kXboxControllerPort);
 
-        mRightMaster = new TalonSRX(Constants.kDriveLeftMasterId);
-        mRightSlave = new TalonSRX(Constants.kDriveLeftSlaveId);
-        mLeftMaster = new TalonSRX(Constants.kDriveRightMasterId);
-        mLeftSlave = new TalonSRX(Constants.kDriveRightSlaveId);
+        mRightMaster = new CANSparkMax(Constants.kDriveRightMasterId, MotorType.kBrushless);
+        mRightSlave = new CANSparkMax(Constants.kDriveRightSlaveId, MotorType.kBrushless);
+        mLeftMaster = new CANSparkMax(Constants.kDriveLeftMasterId, MotorType.kBrushless);
+        mLeftSlave = new CANSparkMax(Constants.kDriveLeftSlaveId, MotorType.kBrushless);
 
-        mRightSlave.set(ControlMode.Follower, Constants.kDriveRightMasterId);
-        mLeftSlave.set(ControlMode.Follower, Constants.kDriveLeftMasterId);
-
-//        mRightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 1000);
-//        mLeftMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 1000);
+        mRightSlave.follow(mRightMaster);
+        mLeftSlave.follow(mLeftMaster);
     }
 
     public static Drive getInstance() {
@@ -59,8 +55,8 @@ public class Drive extends Subsystem {
 
     @Override
     public synchronized void readPeriodicInputs() {
-        double throttle = mThrottleJoystick.getRawAxis(1);
-        double turn = mTurnJoystick.getRawAxis(0);
+        double throttle = mController.getY(Hand.kLeft);
+        double turn = mController.getX(Hand.kRight);
         setCheesyishDrive(throttle, turn, false);
     }
 
@@ -91,8 +87,8 @@ public class Drive extends Subsystem {
 
     @Override
     public synchronized void writePeriodicOutputs() {
-        mRightMaster.set(ControlMode.PercentOutput, mPeriodicIO.right_demand);
-        mLeftMaster.set(ControlMode.PercentOutput, mPeriodicIO.left_demand);
+        mRightMaster.set(mPeriodicIO.right_demand);
+        mLeftMaster.set(mPeriodicIO.left_demand);
     }
 
     @Override
